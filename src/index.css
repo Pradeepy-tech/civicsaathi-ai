@@ -1,0 +1,141 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Newsreader", "Noto Sans Devanagari", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "Noto Sans", "Noto Sans Devanagari", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Noto Sans Devanagari", ui-monospace, monospace;
+}
+
+:root {
+  --bg: #F8F9FA;
+  --ink: #162E51;
+  --accent: #005EA2;
+  --saffron: #FF9933;
+  --green: #138808;
+  --surface: #FFFFFF;
+  --border: rgba(22, 46, 81, 0.12);
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  h1,
+  h2 {
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: #FF9933;
+    color: #162E51;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.civic-content-bg {
+  background: radial-gradient(circle at top right, #EEF3FA 0%, #F8F9FA 100%);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F1F4F9;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(22, 46, 81, 0.22);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 94, 162, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scoped AskSaathi Floating Citizen Assistant */
+.ask-saathi-scope {
+  --primary: #005EA2; --primary-dark: #162E51; --tint: #D9E8F6; --bg: #F4F8FB;
+  --bot-bg: #FFFFFF; --text: #0B0C0C; --muted: #505A5F; --border: #B1B4B6;
+  --focus: #FFDD00; --success: #00703C; --danger: #D4351C; --chip-fg: #005EA2;
+  font-family: "Noto Sans", system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+}
+@media (prefers-color-scheme: dark) {
+  .ask-saathi-scope {
+    --bg: #101820; --bot-bg: #1B2632; --text: #F4F8FB;
+    --muted: #B8C4CE; --border: #5C6B77; --chip-fg: #79C0FF;
+  }
+}
+.ask-saathi-scope h2, .ask-saathi-scope button, .ask-saathi-scope input {
+  font-family: "Noto Sans", system-ui, sans-serif;
+}
+.ask-saathi-scope button:focus-visible, .ask-saathi-scope input:focus-visible {
+  outline: 3px solid var(--focus) !important; outline-offset: 2px !important; box-shadow: 0 0 0 5px #0B0C0C !important;
+}
+.ask-saathi-panel {
+  position: fixed; right: 16px; bottom: 88px; width: 360px; height: 520px;
+  max-height: min(520px, calc(100dvh - 104px)); border-radius: 16px;
+  background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35); display: flex; flex-direction: column; overflow: hidden; z-index: 60;
+}
+@media (max-width: 479px) {
+  .ask-saathi-panel {
+    right: 0; left: 0; bottom: 0; width: 100%; height: 85dvh; max-height: 85dvh; border-radius: 16px 16px 0 0;
+  }
+}
+.as-chip {
+  text-align: left; font-size: 12.5px; font-weight: 600; padding: 8px 11px; min-height: 40px;
+  border-radius: 10px; background: var(--bot-bg); border: 1px solid var(--primary); color: var(--chip-fg); cursor: pointer;
+}
+.as-chip:hover:not(:disabled) { background: var(--tint); color: #0B0C0C; }
+.as-chip:disabled { opacity: 0.5; cursor: default; }
+.as-hdr-btn {
+  min-height: 44px; min-width: 36px; padding: 0 7px; border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF; font-size: 11.5px; font-weight: 700; cursor: pointer;
+}
+.as-hdr-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.2); }
+.as-hdr-btn:disabled { opacity: 0.4; cursor: default; }
+.as-bubble-u { max-width: 85%; border-radius: 16px 2px 16px 16px; background: var(--primary); color: #FFFFFF; padding: 10px 14px; }
+.as-bubble-b { max-width: 91%; border-radius: 2px 16px 16px 16px; background: var(--bot-bg); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; }
+
+@keyframes asFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes asBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes asWave { 0%, 100% { transform: rotate(0deg); } 30% { transform: rotate(-18deg); } 65% { transform: rotate(14deg); } }
+@keyframes asDotPulse { 0%, 80%, 100% { opacity: 0.3; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-2px); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .as-mascot-float { animation: asFloat 4s ease-in-out infinite; }
+  .as-mascot-eyes { transform-box: fill-box; transform-origin: center; animation: asBlink 4.6s ease-in-out infinite; }
+  .as-mascot-hand { transform-box: fill-box; transform-origin: bottom center; }
+  .as-launcher-btn:hover .as-mascot-hand, .as-launcher-btn:focus-visible .as-mascot-hand, .as-header-mascot:hover .as-mascot-hand { animation: asWave 0.7s ease-in-out 2; }
+  .as-typing-dot { animation: asDotPulse 1.2s ease-in-out infinite; }
+  .as-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .as-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .as-mascot-float, .as-mascot-eyes, .as-mascot-hand, .as-typing-dot { animation: none !important; transition: none !important; }
+}

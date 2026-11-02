@@ -1,0 +1,6 @@
+{
+  "name": "CivicSaathi AI",
+  "description": "Multilingual AI-powered citizen grievance submission, smart municipal ward routing, private tracking, and officer resolution dashboard for Indian cities.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

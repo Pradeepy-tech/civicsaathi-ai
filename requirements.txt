@@ -1,0 +1,4 @@
+# CivicSaathi AI — Primary Python AI/ML Engine (Python >= 3.10)
+# Implemented with zero external binary dependencies using Python's native math,
+# collections, unicodedata, regex, threading, and urllib/SSE standard modules
+# for instant in-container startup and deterministic Cloud Run portability.

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "civicsaathi-ai-engine"
+version = "1.0.0"
+description = "Primary Python AI/ML Engine for CivicSaathi AI — Multilingual Multinomial Naive Bayes Triage, Sublinear TF-IDF + BM25 Duplicate Clustering, Severity Hazard Scoring, Gemini 3.8 Flash Orchestration, and Speech-to-Text"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "CivicSaathi Engineering" }
+]
+keywords = [
+  "civic-tech",
+  "multilingual-nlp",
+  "naive-bayes",
+  "tfidf",
+  "bm25",
+  "gemini-api",
+  "grievance-redressal"
+]
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["ai_engine*"]
