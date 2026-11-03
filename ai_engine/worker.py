@@ -144,7 +144,6 @@ def main() -> int:
     if "--self-test" in sys.argv:
         return run_self_test()
 
-    # Warm pre-trained Python ML models immediately on startup
     get_civic_classifier()
     get_severity_scorer()
     get_duplicate_ranker()

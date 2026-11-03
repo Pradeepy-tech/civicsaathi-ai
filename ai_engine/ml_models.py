@@ -46,13 +46,7 @@ COMPLAINT_PRIORITIES: Tuple[str, ...] = (
     "Low",
 )
 
-# ---------------------------------------------------------------------------
-# Curated Multilingual Municipal Training Corpus (12 Categories)
-# Covers English, Hindi (Devanagari), Romanized Hinglish, Marathi, Punjabi,
-# Tamil, Bengali, and Telugu civic complaints.
-# ---------------------------------------------------------------------------
 MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
-    # 1. Water Supply
     ("Water Supply", "drinking water supply not coming in taps since morning dry tap jal board"),
     ("Water Supply", "main water pipeline burst leaking thousands of litres clean water on road"),
     ("Water Supply", "dirty contaminated muddy foul smelling water coming in household tap supply"),
@@ -66,7 +60,6 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Water Supply", "குடிநீர் குழாய் உடைந்து தண்ணீர் சாலையில் வீணாகிறது குடிநீர் வரவில்லை"),
     ("Water Supply", "পানীয় জলের পাইপ ফেটে গেছে সকাল থেকে কল দিয়ে জল আসছে না"),
     ("Water Supply", "తాగునీటి పైపు పగిలిపోయింది కుళాయిలలో నీరు రావడం లేదు"),
-    # 2. Drainage and Sewage
     ("Drainage and Sewage", "open uncovered broken manhole cover on main road sewage overflowing"),
     ("Drainage and Sewage", "blocked stormwater drain nala choked causing severe waterlogging sewer backflow"),
     ("Drainage and Sewage", "gutter overflowing filthy black sewage water entering house lane"),
@@ -79,7 +72,6 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Drainage and Sewage", "சாக்கடை அடைப்பு ஏற்பட்டு கழிவுநீர் சாலையில் தேங்கியுள்ளது திறந்த மேன்ஹோல்"),
     ("Drainage and Sewage", "খোলা ম্যানহোল এবং ড্রেন বন্ধ হয়ে রাস্তায় নোংরা জল জমেছে"),
     ("Drainage and Sewage", "డ్రైనేజీ కాలువ మూసుకుపోయి మురుగునీరు రోడ్డుపై ప్రవహిస్తోంది"),
-    # 3. Road Damage
     ("Road Damage", "deep pothole on main road asphalt broken causing two wheeler bikes to skid"),
     ("Road Damage", "damaged broken footpath slabs uneven pavement broken speed breaker road cave in"),
     ("Road Damage", "road dug up and not repaired craters gravel scattered dangerous for commuters"),
@@ -91,7 +83,6 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Road Damage", "சாலையில் பெரிய பள்ளம் உள்ளது இருசக்கர வாகனங்கள் விபத்தில் சிக்குகின்றன"),
     ("Road Damage", "রাস্তায় বড় গর্ত তৈরি হয়েছে ফুটপাত ভেঙে গেছে"),
     ("Road Damage", "రోడ్డుపై పెద్ద గుంతలు పడ్డాయి వాహనదారులకు ప్రమాదం"),
-    # 4. Garbage and Sanitation
     ("Garbage and Sanitation", "overflowing municipal garbage dustbin waste pileup not collected for days"),
     ("Garbage and Sanitation", "open dumping of trash plastic waste foul smell unhygienic street sweeping needed"),
     ("Garbage and Sanitation", "door to door garbage van not coming dead animal carcass sanitation"),
@@ -102,7 +93,6 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Garbage and Sanitation", "குப்பைத் தொட்டி நிரம்பி வழிகிறது துப்புரவு பணி நடைபெறவில்லை துர்நாற்றம்"),
     ("Garbage and Sanitation", "রাস্তার পাশে আবর্জনার স্তূপ জমে আছে ডাস্টবিন পরিষ্কার করা হয়নি"),
     ("Garbage and Sanitation", "చెత్త కుండీ నిండిపోయి రోడ్డుపై చెత్త పేరుకుపోయింది దుర్వాసన"),
-    # 5. Streetlights
     ("Streetlights", "led streetlight pole not working dark street stretch at night lamp post broken"),
     ("Streetlights", "six consecutive street lights non functional flickering timer fault unsafe night walk"),
     ("Streetlights", "streetlight kharab hai raat ko pura andhera rehta hai khambhe ki light band"),
@@ -112,7 +102,6 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Streetlights", "தெரு விளக்குகள் எரியவில்லை இரவில் நடந்து செல்ல இருட்டாக உள்ளது"),
     ("Streetlights", "রাস্তার স্ট্রিটলাইট জ্বলছে না রাতে অন্ধকার হয়ে থাকে"),
     ("Streetlights", "వీధి దీపాలు వెలగడం లేదు రాత్రిపూట చీకటిగా ఉంది"),
-    # 6. Electricity
     ("Electricity", "exposed live electric wire hanging low from pole sparking transformer shock hazard"),
     ("Electricity", "frequent unscheduled power cut voltage fluctuation tilted electric pole feeder fault"),
     ("Electricity", "bijli ka nanga taar latak raha hai transformer mein sparking ho rahi power cut"),
@@ -122,42 +111,35 @@ MULTILINGUAL_TRAINING_CORPUS: Tuple[Tuple[str, str], ...] = (
     ("Electricity", "மின்சார கம்பி அறுந்து தொங்குகிறது டிரான்ஸ்பார்மர் தீப்பொறி மின்வெட்டு"),
     ("Electricity", "বিদ্যুতের খোলা তার ঝুলছে ট্রান্সফরমারে স্পার্কিং হচ্ছে"),
     ("Electricity", "విద్యుత్ తీగలు తెగి వేలాడుతున్నాయి ట్రాన్స్‌ఫార్మర్ స్పార్కింగ్"),
-    # 7. Parks and Horticulture
     ("Parks and Horticulture", "uprooted fallen tree blocking sector road broken tree branch horticulture pruning"),
     ("Parks and Horticulture", "neighborhood public park overgrown grass weeds broken swings garden benches"),
     ("Parks and Horticulture", "park mein bada ped gir gaya hai jhula tuta hua hai ghaas badi ho gayi"),
     ("Parks and Horticulture", "पार्क के बाहर बड़ा पेड़ गिर गया है टहनी सड़क रोक रही है उद्यान और बगीचे में झूले टूटे हैं"),
     ("Parks and Horticulture", "उद्यानात झाड पडले आहे बागेतील झोपाळे तुटले आहेत"),
     ("Parks and Horticulture", "ਪਾਰਕ ਦੇ ਬਾਹਰ ਵੱਡਾ ਦਰੱਖਤ ਸੜਕ ਉੱਤੇ ਡਿੱਗ ਗਿਆ ਹੈ"),
-    # 8. Encroachment and Illegal Construction
     ("Encroachment and Illegal Construction", "illegal encroachment blocking pedestrian footpath unauthorized shop ramp"),
     ("Encroachment and Illegal Construction", "construction debris malba dumped on public road illegal building extension"),
     ("Encroachment and Illegal Construction", "footpath par avaidh kabza aur अतिक्रमण hai sadak par malba pada hai"),
     ("Encroachment and Illegal Construction", "फुटपाथ और सरकारी जमीन पर अवैध अतिक्रमण निर्माण और मलबा डालकर रास्ता बंद कर दिया है"),
     ("Encroachment and Illegal Construction", "पदपथावर अनधिकृत बांधकाम आणि अतिक्रमण केले आहे"),
-    # 9. Stray Animals and Cattle
     ("Stray Animals and Cattle", "aggressive stray dogs pack dog bite incident rabies vaccination needed"),
     ("Stray Animals and Cattle", "herd of stray cattle cows sitting in middle of main traffic road monkey menace"),
     ("Stray Animals and Cattle", "awara kutton ka jhund kaat raha hai sadak par gaay aur pashu baithe rehte hain"),
     ("Stray Animals and Cattle", "सड़क पर आवारा पशुओं और गायों का झुंड बैठा रहता है आवारा कुत्तों के काटने का डर बंदरों का आतंक"),
     ("Stray Animals and Cattle", "रस्त्यावर मोकाट जनावरे आणि भटक्या कुत्र्यांचा त्रास वाढला आहे"),
-    # 10. Public Health and Fogging
     ("Public Health and Fogging", "mosquito breeding in stagnant water dengue malaria cases anti larval fogging needed"),
     ("Public Health and Fogging", "filthy uncleaned public toilet community urinal without water public health"),
     ("Public Health and Fogging", "machhar bahut ho gaye hain dengue फैल रहा है fogging karwayein public toilet ganda"),
     ("Public Health and Fogging", "मच्छरों का प्रकोप बढ़ गया है डेंगू मलेरिया का खतरा है फॉगिंग कराएं सार्वजनिक शौचालय गंदा है"),
-    # 11. Public Safety
     ("Public Safety", "broken bridge safety railing open unbarricaded construction pit unsafe dark underpass"),
     ("Public Safety", "non working municipal cctv camera abandoned burnt vehicle blocking lane safety risk"),
     ("Public Safety", "nala ki safety railing tuti hui hai khula gaddha bina barricade ke hai unsafe underpass"),
     ("Public Safety", "पुलिया की सुरक्षा रेलिंग टूटी हुई है खुला गड्ढा बिना बैरिकेड के है सार्वजनिक सुरक्षा खतरा"),
-    # 12. Other Civic Issues
     ("Other Civic Issues", "damaged public municipal notice board general civic grievance inquiry"),
     ("Other Civic Issues", "noisy loudspeaker nuisance civic center enquiry general administration"),
     ("Other Civic Issues", "सार्वजनिक सूचना बोर्ड टूटा हुआ है सामान्य नागरिक प्रशासन शिकायत"),
 )
 
-# Deterministic Multilingual Regex Priors (boosts Naive Bayes log-likelihoods & acts as exact tie-breaker)
 KEYWORD_CATEGORY_PATTERNS: Tuple[Tuple[str, re.Pattern[str]], ...] = (
     (
         "Water Supply",
@@ -250,7 +232,6 @@ KEYWORD_CATEGORY_PATTERNS: Tuple[Tuple[str, re.Pattern[str]], ...] = (
     ),
 )
 
-# Deterministic Safety & Urgency Rules (Municipal SLA Policy)
 CRITICAL_HAZARD_RULES: Tuple[Tuple[re.Pattern[str], str], ...] = (
     (
         re.compile(
@@ -314,7 +295,6 @@ HIGH_PRIORITY_RULES: Tuple[Tuple[re.Pattern[str], str], ...] = (
     ),
 )
 
-# Keeps Latin word chars + Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, Tamil, Telugu, Kannada, Malayalam
 _NON_TOKEN_RE = re.compile(r"[^\w\s\u0900-\u0D7F]", re.UNICODE)
 _WHITESPACE_RE = re.compile(r"\s+")
 
@@ -337,11 +317,9 @@ class MultilingualFeatureExtractor:
         words = [w for w in norm.split(" ") if len(w) >= 2]
         features: List[str] = [f"w:{w}" for w in words]
 
-        # Word bigrams capture phrases like "no water", "open manhole", "पाइपलाइन फट"
         for i in range(len(words) - 1):
             features.append(f"bg:{words[i]}_{words[i + 1]}")
 
-        # Character 3-grams and 4-grams capture Indic inflections & Hinglish spelling variations
         for word in words:
             if len(word) >= 3:
                 padded = f"^{word}$"
@@ -414,7 +392,6 @@ class MultilingualCivicNaiveBayes:
         num_classes = len(CIVIC_CATEGORIES)
         log_scores: Dict[str, float] = {}
 
-        # Evaluate regex domain signals for hybrid Naive Bayes + expert prior boost
         regex_matches: set[str] = set()
         for category, pattern in KEYWORD_CATEGORY_PATTERNS:
             if pattern.search(text):
@@ -433,12 +410,10 @@ class MultilingualCivicNaiveBayes:
                     score += cnt * math.log(num / denom)
 
             if category in regex_matches:
-                # Calibrated log-likelihood boost when verified domain lexicon fires
                 score += 6.5
 
             log_scores[category] = score
 
-        # Temperature-scaled softmax over log-posteriors for readable confidence [0, 1]
         scale = 0.22
         scaled = {cat: val * scale for cat, val in log_scores.items()}
         max_log = max(scaled.values())
@@ -449,7 +424,6 @@ class MultilingualCivicNaiveBayes:
         ranked = sorted(probs.items(), key=lambda kv: kv[1], reverse=True)
         best_cat, best_prob = ranked[0]
 
-        # If no domain pattern matched and top Naive Bayes confidence is very diffuse, route to Nodal Triage
         if not regex_matches and best_prob < 0.16:
             return ("Other Civic Issues", round(best_prob, 4), dict(ranked[:3]))
 
@@ -492,7 +466,6 @@ class CivicSeverityScorer:
                 or "Standard municipal SLA assessment based on reported civic impact.",
             )
 
-        # Feature-weighted urgency score when no LLM suggestion is present
         urgency_score = 1.0
         for pattern, weight in self.URGENCY_WEIGHTS:
             if pattern.search(text):
@@ -560,7 +533,6 @@ class LocationEntityExtractor:
                 return "Marathi (मराठी)"
             return "Hindi (हिन्दी)"
 
-        # Check Romanized Hinglish cues
         if re.search(
             r"\b(hai|nahi|paani|sadak|gaddha|kachra|bijli|khula|gayi|gaya|raha|mein|ke\s+paas)\b",
             text,
@@ -736,7 +708,6 @@ class SublinearTfidfBm25DuplicateRanker:
         return scored[:3]
 
 
-# Singleton pre-trained model instances warmed at worker startup
 _CIVIC_CLASSIFIER: Optional[MultilingualCivicNaiveBayes] = None
 _SEVERITY_SCORER: Optional[CivicSeverityScorer] = None
 _DUPLICATE_RANKER: Optional[SublinearTfidfBm25DuplicateRanker] = None

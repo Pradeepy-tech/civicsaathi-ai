@@ -129,9 +129,6 @@ def strip_html_tags(text: str) -> str:
     return _HTML_TAG_RE.sub("", text or "")
 
 
-# ---------------------------------------------------------------------------
-# 1. Multilingual Grievance Classification Pipeline (Python ML + Gemini 3.8)
-# ---------------------------------------------------------------------------
 def classify_by_python_ml_fallback(
     description: str,
     language_code: str,
@@ -205,7 +202,6 @@ def classify_citizen_complaint(params: Dict[str, Any]) -> Dict[str, Any]:
     follow_up_context = params.get("followUpContext")
     follow_str = str(follow_up_context).strip() if follow_up_context else None
 
-    # Pre-compute Python Multinomial Naive Bayes + Severity baseline in <1ms
     classifier = get_civic_classifier()
     severity_scorer = get_severity_scorer()
     combined_text = f"{description} {follow_str or ''}".strip()
@@ -306,9 +302,6 @@ Instructions:
     return classify_by_python_ml_fallback(description, language_code, locality, follow_str)
 
 
-# ---------------------------------------------------------------------------
-# 2. Sublinear TF-IDF + BM25 Duplicate Clustering Pipeline (Python ML)
-# ---------------------------------------------------------------------------
 def rank_duplicate_candidates(params: Dict[str, Any]) -> List[Dict[str, Any]]:
     ranker = get_duplicate_ranker()
     return ranker.rank(
@@ -320,9 +313,6 @@ def rank_duplicate_candidates(params: Dict[str, Any]) -> List[Dict[str, Any]]:
     )
 
 
-# ---------------------------------------------------------------------------
-# 3. Speech-to-Text Voice Transcription Pipeline (Python + Gemini 3.5 Transcribe)
-# ---------------------------------------------------------------------------
 def transcribe_citizen_audio(params: Dict[str, Any]) -> Dict[str, str]:
     base64_audio = str(params.get("base64Audio") or "").strip()
     mime_type = str(params.get("mimeType") or "audio/webm").split(";")[0].strip() or "audio/webm"
@@ -454,9 +444,6 @@ def transcribe_citizen_audio(params: Dict[str, Any]) -> Dict[str, str]:
     raise RuntimeError(format_gemini_error_message(last_error, saw_quota_exhausted))
 
 
-# ---------------------------------------------------------------------------
-# 4. AskSaathi Streaming Citizen Assistant Pipeline (Python SSE + ML Fallback)
-# ---------------------------------------------------------------------------
 def _build_ask_saathi_python_fallback(messages: List[Dict[str, str]]) -> str:
     latest_user = ""
     for msg in reversed(messages):
@@ -467,7 +454,6 @@ def _build_ask_saathi_python_fallback(messages: List[Dict[str, str]]) -> str:
     lower = latest_user.lower()
     is_hindi = bool(re.search(r"[\u0900-\u097F]", latest_user))
 
-    # Emergency 112 Guardrail
     if re.search(
         r"\b(fire|injury|injured|bleeding|live\s*wire|electric\s*shock|sparking|gas\s*leak|"
         r"crime|attack|ambulance|emergency|danger\s*to\s*life)\b|"
@@ -483,7 +469,6 @@ def _build_ask_saathi_python_fallback(messages: List[Dict[str, str]]) -> str:
             "Please confirm you are safe before continuing with a civic report. [Helpline] [Report an issue]"
         )
 
-    # PII / Aadhaar / OTP Guardrail
     if re.search(
         r"\b(\d{4}\s\d{4}\s\d{4}|\d{12}|aadhaar|aadhar|otp|password|cvv|bank\s*account)\b|"
         r"(आधार|ओटीपी|पासवर्ड|बैंक\s*खाता)",
