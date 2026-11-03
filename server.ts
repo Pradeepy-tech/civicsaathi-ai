@@ -40,6 +40,7 @@ import {
   updateOfficerScope,
 } from './src/db/repository.ts';
 
+dotenv.config({ path: '.env.local' });
 dotenv.config();
 
 const app = express();

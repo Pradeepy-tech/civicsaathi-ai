@@ -18,28 +18,28 @@ _ENV_LOADED = False
 
 
 def load_dotenv_if_present() -> None:
-    """Loads key=value pairs from .env into os.environ without overriding existing env vars."""
+    """Loads key=value pairs from .env.local and .env into os.environ without overriding existing env vars."""
     global _ENV_LOADED
     if _ENV_LOADED:
         return
     _ENV_LOADED = True
 
-    env_path = Path.cwd() / ".env"
-    if not env_path.is_file():
-        return
-
-    try:
-        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-            line = raw_line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            key, val = line.split("=", 1)
-            key = key.strip()
-            val = val.strip().strip('"').strip("'")
-            if key and key not in os.environ:
-                os.environ[key] = val
-    except OSError:
-        pass
+    for filename in (".env.local", ".env"):
+        env_path = Path.cwd() / filename
+        if not env_path.is_file():
+            continue
+        try:
+            for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, val = line.split("=", 1)
+                key = key.strip()
+                val = val.strip().strip('"').strip("'")
+                if key and key not in os.environ:
+                    os.environ[key] = val
+        except OSError:
+            pass
 
 
 def is_usable_api_key(value: Optional[str]) -> bool:

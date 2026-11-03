@@ -1,93 +1,210 @@
-# CivicSaathi AI — Multilingual Citizen Grievance Platform
+# CivicSaathi AI (नागरिक साथी AI)
 
 **Your Voice. Your Language. Your Solution.**
 
-CivicSaathi AI is a full-stack, multilingual citizen grievance submission, smart municipal ward routing, private tracking, and RBAC officer resolution web application built for Indian municipal contexts (**New Delhi MCD**, **Pune PMC**, and **Bengaluru BBMP**).
+AI-powered multilingual civic grievance redressal for Indian cities.
 
 ---
 
-## 1. Feature Matrix & Transparency Disclosure
+## Table of Contents
 
-To maintain strict engineering transparency, features are categorized clearly below:
-
-### Working End-to-End Features
-- **Bilingual UI (`English` & `हिन्दी`) + Regional Input**: Citizens can switch interface copy between English and Hindi, and submit grievances in **Hindi, Hinglish, English, Marathi, Punjabi, Tamil, Bengali, and Telugu**.
-- **Server-Side AI Voice Transcription**: Browser microphone recordings are sent securely to the backend (`/api/ai/transcribe` using `gemini-3.5-transcribe`) without exposing any API keys in client code.
-- **Multilingual AI Triage & Rule-Based Fallback**: Server-side NLP (`/api/ai/classify` using `gemini-3.8-flash`) extracts category, bilingual summaries, location clues, follow-up questions for vague reports, and urgency priority. If AI credentials are unavailable, a deterministic multilingual rule-based classifier runs automatically and labels the result **`Automated Rule-Based Classification`**.
-- **Smart Locality-to-Ward Routing**: Maps verified localities across New Delhi, Pune, and Bengaluru to configured municipal wards, departments, and priority SLA deadlines (`Critical: 6h`, `High: 24h`, `Medium: 72h`, `Low: 120h`), flagging unlisted or ambiguous cases as **`Manual Assignment Required`**.
-- **Duplicate Complaint Clustering**: Identifies active grievances in the same city/ward/category and lets citizens link their report to an existing neighborhood cluster while still issuing their own independent **Complaint ID** and **PIN**.
-- **Guest Privacy via Hashed Access PIN**: Citizens receive a unique Complaint ID (e.g., `CS-DEL-2026-4812`) and 4-digit secret PIN (salted SHA-256 hash stored in PostgreSQL). Private citizen complaints are never exposed publicly and cannot be accessed without matching credentials.
-- **Before-and-After Photo Evidence & Citizen Resolution Verification**: Citizens attach optional pre-repair photos; officers attach post-repair photos when marking a ticket `Resolved`. Citizens unlock their ticket to **Confirm Resolution** (with 1–5 star rating) or **Report Problem Unresolved** (reopening and escalating the ticket to `In Progress`).
-- **Automatic Overdue SLA Escalation**: Overdue `Pending` and `In Progress` tickets automatically escalate (`is_escalated = true`) and record audit entries in `status_history`.
-- **Authenticated Officer & Admin Dashboard (Google Sign-In + RBAC)**: Secured via Firebase Google Authentication and server-side Firebase Admin ID token verification. Department Officers only access complaints routed to their authorized department, while Nodal Super Admins oversee all departments, analytics charts, and officer role assignments.
-
-### Simulated / Prototype-Scoped Features
-- **Government Portal Submission**: CivicSaathi AI is a standalone civic-tech prototype. Complaints are persisted in the application's Cloud SQL PostgreSQL database and are **not** transmitted to external municipal government portals.
-- **Citizen SMS / Email Dispatch**: Status transitions and escalations are recorded in the persistent `notifications` audit ledger and displayed inside the Citizen Tracker. External SMS/email gateway delivery is marked `logged_no_external_provider` unless an external provider webhook is integrated.
+1. [About the Project](#about-the-project)
+2. [Key Features](#key-features)
+3. [Screenshots](#screenshots)
+4. [How It Works](#how-it-works)
+5. [Supported Cities and Languages](#supported-cities-and-languages)
+6. [Installation and Setup](#installation-and-setup)
+7. [How to Use the App](#how-to-use-the-app)
+8. [Privacy and Security](#privacy-and-security)
+9. [Disclaimer](#disclaimer)
 
 ---
 
-## 2. Architecture & Database Schema
+## About the Project
 
-- **Primary AI / ML Engine (`Python 3.10+` — `ai_engine/`)**:
-  - **`MultilingualCivicNaiveBayes`** (`ai_engine/ml_models.py`): Multinomial Naive Bayes text classifier with Laplace smoothing, word unigrams/bigrams, character 3/4-grams, and multilingual domain priors across 12 civic categories (English, Hindi, Hinglish, Marathi, Punjabi, Tamil, Bengali, Telugu).
-  - **`CivicSeverityScorer`** (`ai_engine/ml_models.py`): Hybrid deterministic municipal safety hazard rules (`Critical` Rules #1–#4) + feature-weighted linear urgency scorer.
-  - **`SublinearTfidfBm25DuplicateRanker`** (`ai_engine/ml_models.py`): Sublinear TF-IDF (`1 + log(tf)`) cosine similarity + Okapi BM25 (`k1=1.5, b=0.75`) + lexical Jaccard duplicate complaint ranker.
-  - **Server-Side Gemini & STT Orchestration** (`ai_engine/gemini_client.py`, `ai_engine/pipelines.py`): Python REST/SSE orchestration for `gemini-3.8-flash` (`thinkingLevel: "LOW"`), `gemini-3.1-flash-lite`, and `gemini-3.5-transcribe` over persistent zero-port stdio NDJSON IPC (`ai_engine/worker.py`).
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Lucide Icons
-- **API Gateway**: Node.js + Express (`server.ts`), Rate Limiting, Input Sanitization, Python IPC Bridge (`src/server/pythonMlBridge.ts`)
-- **Database**: Managed **Cloud SQL (PostgreSQL)** via **Drizzle ORM** (`src/db/schema.ts`) across 9 normalized tables:
-  1. `users` (Officer/Admin profiles & RBAC scopes)
-  2. `departments` (8 municipal wings + priority SLA hours)
-  3. `wards` (Verified All-India multi-city municipal wards)
-  4. `complaints` (Grievances, hashed PINs, routing, duplicate links, SLA deadlines)
-  5. `complaint_assignments` (Auto & manual assignment audit log)
-  6. `status_history` (Chronological status & escalation timeline)
-  7. `notifications` (Citizen alert ledger)
-  8. `resolution_feedback` (Citizen confirmation ratings & reopen reasons)
-  9. `uploaded_evidence` (Validated before, after, and reopen photographs)
-- **Authentication**: Firebase Authentication (`signInWithPopup` Google OAuth) + `firebase-admin` token verification middleware
+Reporting a civic issue in India is still hard. Citizens face four problems:
+
+- **Language barrier:** most portals expect English or formal Hindi.
+- **Unclear routing:** people do not know which body, ward or department owns the issue.
+- **Duplicate reports:** the same problem is filed again and again.
+- **No proof of repair:** complaints are closed without citizen verification.
+
+**CivicSaathi AI** solves these with one platform. A citizen describes the problem in their own language, by text or voice. The AI understands it, detects the category, and routes it to the correct municipal body and ward. The citizen then tracks it with a private Complaint ID and PIN, and verifies the repair.
+
+## Key Features
+
+| Feature | What it does |
+| :--- | :--- |
+| Multilingual input | Hindi, Hinglish, English, Marathi, Punjabi, Tamil, Bengali and Telugu |
+| Voice and text | Record your voice or type the complaint |
+| AI category triage | Auto-detects the category from 12 verified civic categories |
+| Smart ward routing | Confirms the municipal body, ward, sector and civic helpline |
+| Duplicate detection | Groups similar complaints in the same neighbourhood |
+| Public complaint feed | Shows status: Pending, In Progress, Escalated, Resolved |
+| Private tracking | Complaint ID plus 4-digit PIN, with SLA deadlines |
+| Citizen verification | Verify the repair after resolution (before and after check) |
+| Officer console | Google Sign-In, role-based access, department queues, SLA analytics |
+| AskSaathi assistant | AI chat helper in English, Hindi and Hinglish |
+| Accessibility | English/हिन्दी toggle and adjustable text size |
+
+## Screenshots
+
+### 1. Home Page
+
+Clear entry point with live counters (registered, resolved, compliance, ULBs and wards).
+
+![Home Page](public/assets/aistudio/image_ac9008f0.png)
+
+### 2. Public Complaint Feed
+
+Every complaint shows its department, ID and status. Duplicates are grouped, and resolved cases have a **Verify** button.
+
+![Public Complaint Feed](public/assets/aistudio/image_624e1b1b.png)
+
+### 3. File a Complaint and Smart Ward Routing
+
+Choose a language, describe the issue, then select the city and sector. The app verifies the municipal authority, ward and helpline.
+
+![File a Complaint and Smart Ward Routing](public/assets/aistudio/image_d4851ac0.png)
+
+### 4. Private Complaint Tracker
+
+Enter the Complaint ID and secret PIN to see status history, SLA deadlines and repair verification.
+
+![Private Complaint Tracker](public/assets/aistudio/image_9a7a5df2.png)
+
+### 5. Officer and Admin Console
+
+Authenticated access for municipal officers with role-based access control.
+
+![Officer and Admin Console](public/assets/aistudio/image_bedcc51c.png)
+
+### 6. AskSaathi AI Assistant
+
+Quick actions for reporting, checking status, finding the nearest office and the helpline.
+
+![AskSaathi AI Assistant](public/assets/aistudio/image_c7cf5f69.png)
+
+## How It Works
+
+```text
+Citizen describes issue (voice or text, in any of 8 languages)
+      |
+      v
+Step 1: Describe & Locate   -> language, city, municipal body, sector, optional photo
+      |
+      v
+Step 2: AI Review & Confirm -> category detected, department and ward previewed
+      |
+      v
+Step 3: Tracking ID & PIN   -> complaint registered, ID and 4-digit PIN issued
+      |
+      v
+Officer console             -> queue, assignment, SLA tracking
+      |
+      v
+Citizen verifies the repair -> complaint closed
+```
+
+## Supported Cities and Languages
+
+**Cities (7):** Chandigarh (MCC), Gurugram (MCG), Faridabad (MCF), Panchkula (MCP), Jaipur (JMC), Udaipur (UMC), New Delhi (MCD)
+
+**Languages (8):** Hindi, Hinglish, English, Marathi, Punjabi, Tamil, Bengali, Telugu
+
+**Categories (12):** Water, Drainage/Sewage, Roads, Sanitation, Streetlights, Electricity, Parks and Trees, Encroachment, Stray Animals/Cattle, Fogging/Health, Safety, General
+
+## Installation and Setup
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) version 18 or higher (check with `node -v`)
+- npm (comes with Node.js)
+- A free **Gemini API key** from [Google AI Studio](https://aistudio.google.com/apikey)
+
+### Step 1: Get the code
+
+```bash
+git clone https://github.com/<your-username>/<your-repo-name>.git
+cd <your-repo-name>
+```
+
+> Replace `<your-username>` and `<your-repo-name>` with your own GitHub details.
+
+### Step 2: Install dependencies
+
+```bash
+npm install
+```
+
+### Step 3: Add your API key
+
+Create a file named `.env.local` in the project root folder and add:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+If your project also uses Google Sign-In or a database for the officer console, add those keys to the same file.
+
+> Never commit `.env.local` to GitHub. Make sure it is listed in `.gitignore`.
+
+### Step 4: Run the app
+
+```bash
+npm run dev
+```
+
+Open the local address shown in the terminal (usually `http://localhost:3000` or `http://localhost:5173`).
+
+### Step 5: Build for production (optional)
+
+```bash
+npm run build
+npm run preview
+```
+
+### Troubleshooting
+
+| Problem | Fix |
+| :--- | :--- |
+| "Unable to connect to AskSaathi" | Check that `GEMINI_API_KEY` is set correctly, then restart the dev server |
+| `npm install` fails | Update Node.js to version 18 or higher and try again |
+| Voice recording does not work | Allow microphone access in the browser. Use Chrome or Edge |
+| Port already in use | Stop the other app, or run on another port |
+
+## How to Use the App
+
+### As a citizen
+
+1. Open the home page and click **Submit a Citizen Grievance**.
+2. Pick your language and describe the problem by typing or clicking **Record Voice**. You can also click **Insert Sample Phrase** to try it.
+3. Select your city, municipal body and sector. Check the verified ward and helpline.
+4. Leave the category on **Auto-detect via AI Triage**, or choose one. Optionally attach a street photo.
+5. Click **Analyze & Preview Department Routing**, review the AI summary and confirm.
+6. Save your **Complaint ID** and **4-digit PIN**.
+7. Open **Track Complaint**, enter both, and click **Check Status**.
+8. When the issue is fixed, verify the repair.
+
+### As a municipal officer
+
+1. Open **Officer Dashboard**.
+2. Sign in with Google.
+3. Manage your department queue and monitor SLA analytics.
+
+**Try the demo tickets:** on the tracking page, click any sample ticket such as `CS-CHD-2026-1007` (In Progress) or `CS-JAI-2026-1009` (Resolved).
+
+## Privacy and Security
+
+- Complaint details are private. Tracking needs both the Complaint ID and the secret PIN.
+- PINs are protected with salted SHA-256 hashing.
+- Officer access uses Google Sign-In with role-based access control.
+- In an emergency, call **112**.
+
+## Disclaimer
+
+CivicSaathi AI is a prototype built for a hackathon. Complaints submitted here are stored in the app database for demonstration purposes only. Sample records are fictional, and routing uses configurable local ward rules, not live government portals.
 
 ---
 
-## 3. Setup & Local / Cloud Run Deployment
-
-1. Copy `.env.example` to `.env` and populate environment variables:
-   - `GEMINI_API_KEY`: Server-side Gemini API key (configured via Secrets in AI Studio).
-   - `SQL_HOST`, `SQL_DB_NAME`, `SQL_USER`, `SQL_PASSWORD`, `SQL_ADMIN_USER`, `SQL_ADMIN_PASSWORD`: Provisioned automatically by Cloud SQL setup.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start development server (Express + Vite middleware on port 3000):
-   ```bash
-   npm run dev
-   ```
-4. Build and run for production:
-   ```bash
-   npm run build
-   NODE_ENV=production npm start
-   ```
-
----
-
-## 4. End-to-End Testing Guide & Fictional Sample Data
-
-### Pre-Seeded Fictional Sample Tickets (Clearly Labeled Demo Data)
-| Complaint ID | Demo PIN | City & Locality | Language | Scenario Covered |
-| :--- | :--- | :--- | :--- | :--- |
-| `CS-DEL-2026-1001` | `1122` | New Delhi · Ajmal Khan Road | Hinglish | Critical water pipe burst, **Overdue Auto-Escalated**, includes Before photo |
-| `CS-BLR-2026-1002` | `2233` | Bengaluru · HAL 2nd Stage | English | **`Resolved` with Before & After photos** — ready to test Citizen Verification! |
-| `CS-PUN-2026-1003` | `3344` | Pune · Kothrud Depot | Marathi | Critical uncovered manhole near school (`Safety Rule #1`), `In Progress` |
-| `CS-DEL-2026-1004` | `4455` | New Delhi · Ajmal Khan Road | Hindi | **Linked Duplicate** grouped under `CS-DEL-2026-1001` |
-| `CS-BLR-2026-1005` | `5566` | Bengaluru · 80 Feet Road | Tamil | Streetlight feeder outage, `In Progress` |
-| `CS-PUN-2026-1006` | `6677` | Pune · Shivajinagar | Hindi | Rule-based fallback + **`Manual Assignment Required`** |
-
-### Recommended 7-Step Evaluation Flow
-1. **Submit in Hindi or Hinglish**: Open **Submit Complaint**, pick `Hindi` or `Hinglish` (click *Insert Sample Phrase* or record voice), choose `New Delhi` → `Ajmal Khan Road`, enter your name, and click **Analyze & Preview Department Routing**.
-2. **Verify AI Triage & Duplicate Detection**: Inspect the interpreted summary, `Water Supply` category, `Critical` priority rule, mapped ward (`Karol Bagh Central`), and notice the **Duplicate Complaint Detection** prompt matching `CS-DEL-2026-1001`.
-3. **Confirm & Register**: Check the confirmation box and click **Confirm & Submit Grievance**. Copy your generated **Complaint ID** and **4-Digit PIN**.
-4. **Officer Login & RBAC**: Open **Officer Dashboard** and sign in with Google. Use the **RBAC Scope** selector in the header to test switching between `Super Admin (All Departments)` and `Officer — WATER Only` to observe server-enforced department isolation.
-5. **Update Status**: Select your newly submitted complaint, set status to `Resolved` (optionally attach an "After" photo), add an official remark, and click **Save Official Update**.
-6. **Private Citizen Tracking**: Open **Track Complaint**, enter your **Complaint ID** and **PIN** (try an incorrect PIN first to confirm `403` privacy protection), and inspect the timestamped status timeline.
-7. **Citizen Resolution Verification**: In the unlocked resolved view, submit **Confirm Issue Resolved** (with star rating) or **Report Problem Unresolved** to verify live ticket reopening and escalation.
+**This Project Is Made by the Use Of Google AI Studio**
